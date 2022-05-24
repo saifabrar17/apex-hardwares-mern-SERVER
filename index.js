@@ -1,7 +1,7 @@
 
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -21,12 +21,21 @@ async function run() {
     await client.connect();
     const productCollection = client.db('apex_hardwares').collection('products');
 
+    //get all products
     app.get('/product', async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
       res.send(products);
     });
+
+    //get by id
+    app.get('/product/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const product = await productCollection.findOne(query);
+      res.send(product);
+  });
   }
 
   finally {
