@@ -19,7 +19,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
   try {
     await client.connect();
+
+    //database collections
     const productCollection = client.db('apex_hardwares').collection('products');
+    const orderCollection = client.db('apex_hardwares').collection('orders');
+
 
     //get all products
     app.get('/product', async (req, res) => {
@@ -45,15 +49,46 @@ async function run() {
     });
 
     //DELETE AN EXISTING PRODUCT
-    
+
     app.delete('/product/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await productCollection.deleteOne(query);
       res.send(result);
-  })
+    })
 
+    //post orders to database
+    app.post('/order', async (req, res) => {
+      const order = req.body;
+      const result = await orderCollection.insertOne(order);
+      res.send(result);
+    })
 
+    //get all orders
+    app.get('/orders', async (req, res) => {
+      const query = {};
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
+
+    //get specific one order details by id
+    app.get('/orders/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const order = await orderCollection.findOne(query);
+      res.send(order);
+    })
+
+    app.get('/order-by/:email', async (req, res) => {
+      const email = req.params.email;
+      console.log('something', email);
+      const query = { email: email };
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+
+    })
 
   }
 
