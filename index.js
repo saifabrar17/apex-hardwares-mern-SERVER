@@ -164,15 +164,7 @@ async function run() {
       res.send(order);
     })
 
-    app.get('/order-by/:email', verifyJWT, async (req, res) => {
-      const email = req.params.email;
-      console.log('something', email);
-      const query = { email: email };
-      const cursor = orderCollection.find(query);
-      const orders = await cursor.toArray();
-      res.send(orders);
-
-    })
+   
     
 
 
