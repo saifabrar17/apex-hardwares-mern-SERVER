@@ -86,7 +86,7 @@ async function run() {
     })
 
     //get all users
-    app.get('/user', verifyJWT, async (req, res) => {
+    app.get('/user', async (req, res) => {
       const users = await userCollection.find().toArray();
       res.send(users);
     });
@@ -95,7 +95,7 @@ async function run() {
 
 
     //get all products
-    app.get('/product', verifyJWT, async (req, res) => {
+    app.get('/product',  async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
@@ -103,7 +103,7 @@ async function run() {
     });
 
     //get by id
-    app.get('/product/:id', verifyJWT, async (req, res) => {
+    app.get('/product/:id',  async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const product = await productCollection.findOne(query);
@@ -111,7 +111,7 @@ async function run() {
     });
 
     //ADD NEW PRODUCT
-    app.post('/product', verifyJWT, async (req, res) => {
+    app.post('/product',  async (req, res) => {
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
       res.send(result);
@@ -125,7 +125,7 @@ async function run() {
     });
 
       //get all reviews
-      app.get('/reviews', verifyJWT, async (req, res) => {
+      app.get('/reviews',  async (req, res) => {
         const query = {};
         const cursor = reviewCollection.find(query);
         const reviews = await cursor.toArray();
@@ -134,7 +134,7 @@ async function run() {
 
     //DELETE AN EXISTING PRODUCT
 
-    app.delete('/product/:id', verifyJWT, async (req, res) => {
+    app.delete('/product/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await productCollection.deleteOne(query);
@@ -142,7 +142,7 @@ async function run() {
     })
 
     //post orders to database
-    app.post('/order', verifyJWT, async (req, res) => {
+    app.post('/order',  async (req, res) => {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
       res.send(result);
@@ -164,7 +164,14 @@ async function run() {
       res.send(order);
     })
 
-   
+    app.get('/order-by/:email', verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+
+    })
     
 
 
