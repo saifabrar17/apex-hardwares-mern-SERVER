@@ -86,7 +86,7 @@ async function run() {
     })
 
     //get all users
-    app.get('/user', async (req, res) => {
+    app.get('/user', verifyJWT, async (req, res) => {
       const users = await userCollection.find().toArray();
       res.send(users);
     });
@@ -95,7 +95,7 @@ async function run() {
 
 
     //get all products
-    app.get('/product', async (req, res) => {
+    app.get('/product', verifyJWT, async (req, res) => {
       const query = {};
       const cursor = productCollection.find(query);
       const products = await cursor.toArray();
@@ -103,7 +103,7 @@ async function run() {
     });
 
     //get by id
-    app.get('/product/:id', async (req, res) => {
+    app.get('/product/:id', verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const product = await productCollection.findOne(query);
@@ -111,22 +111,30 @@ async function run() {
     });
 
     //ADD NEW PRODUCT
-    app.post('/product', async (req, res) => {
+    app.post('/product', verifyJWT, async (req, res) => {
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
       res.send(result);
     });
 
     //add new review
-    app.post('/reviews', async (req, res) => {
+    app.post('/reviews', verifyJWT, async (req, res) => {
       const review = req.body;
       const result = await reviewCollection.insertOne(review);
       res.send(result);
     });
 
+      //get all reviews
+      app.get('/reviews', verifyJWT, async (req, res) => {
+        const query = {};
+        const cursor = reviewCollection.find(query);
+        const reviews = await cursor.toArray();
+        res.send(reviews);
+      });
+
     //DELETE AN EXISTING PRODUCT
 
-    app.delete('/product/:id', async (req, res) => {
+    app.delete('/product/:id', verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await productCollection.deleteOne(query);
@@ -134,7 +142,7 @@ async function run() {
     })
 
     //post orders to database
-    app.post('/order', async (req, res) => {
+    app.post('/order', verifyJWT, async (req, res) => {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
       res.send(result);
@@ -149,14 +157,14 @@ async function run() {
     });
 
     //get specific one order details by id
-    app.get('/orders/:id', async (req, res) => {
+    app.get('/orders/:id', verifyJWT, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const order = await orderCollection.findOne(query);
       res.send(order);
     })
 
-    app.get('/order-by/:email', async (req, res) => {
+    app.get('/order-by/:email', verifyJWT, async (req, res) => {
       const email = req.params.email;
       console.log('something', email);
       const query = { email: email };
@@ -165,6 +173,7 @@ async function run() {
       res.send(orders);
 
     })
+    
 
 
 
