@@ -40,16 +40,17 @@ async function run() {
     const productCollection = client.db('apex_hardwares').collection('products');
     const orderCollection = client.db('apex_hardwares').collection('orders');
     const userCollection = client.db('apex_hardwares').collection('users');
+    const reviewCollection = client.db('apex_hardwares').collection('reviews');
 
     //user collection api START
 
     //admin role
 
-    app.get('/admin/:email', async(req, res) =>{
+    app.get('/admin/:email', async (req, res) => {
       const email = req.params.email;
-      const user = await userCollection.findOne({email: email});
+      const user = await userCollection.findOne({ email: email });
       const isAdmin = user.role === 'admin';
-      res.send({admin: isAdmin})
+      res.send({ admin: isAdmin })
     })
 
     app.put('/userx/admin/:email', verifyJWT, async (req, res) => {
@@ -64,8 +65,8 @@ async function run() {
         const result = await userCollection.updateOne(filter, updateDoc);
         res.send(result);
       }
-      else{
-        res.status(403).send({message: 'forbidden'});
+      else {
+        res.status(403).send({ message: 'forbidden' });
       }
 
     })
@@ -79,7 +80,7 @@ async function run() {
         $set: user,
       };
       const result = await userCollection.updateOne(filter, updateDoc, options);
-      
+
       const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
       res.send({ result, token });
     })
@@ -113,6 +114,13 @@ async function run() {
     app.post('/product', async (req, res) => {
       const newProduct = req.body;
       const result = await productCollection.insertOne(newProduct);
+      res.send(result);
+    });
+
+    //add new review
+    app.post('/reviews', async (req, res) => {
+      const review = req.body;
+      const result = await reviewCollection.insertOne(review);
       res.send(result);
     });
 
@@ -157,6 +165,8 @@ async function run() {
       res.send(orders);
 
     })
+
+
 
   }
 
