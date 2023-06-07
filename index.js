@@ -31,6 +31,7 @@ function verifyJWT(req, res, next) {
   });
 }
 
+// adding this content for no reason
 
 async function run() {
   try {
