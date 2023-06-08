@@ -72,6 +72,19 @@ async function run() {
 
     })
 
+    // Removing a user
+    app.delete('/users/:userId', async (req, res) => {
+      const userId = req.params.userId;
+      try {
+        const result = await userCollection.deleteOne({ _id: ObjectId(userId) });
+        const users = await userCollection.find().toArray(); // Fetch the updated user list
+        res.send(users);
+      } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send({ message: 'Internal Server Error' });
+      }
+    });
+
     app.put('/user/:email', async (req, res) => {
       const email = req.params.email;
       const user = req.body;
@@ -191,5 +204,5 @@ app.get('/', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Doctors App listening on port ${port}`)
+  console.log(`warehouse manager listening on port ${port}`)
 })
