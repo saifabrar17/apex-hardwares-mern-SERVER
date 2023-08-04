@@ -140,23 +140,23 @@ async function run() {
     });
 
     // Update a product by its ID
-    app.put('/product/:id', async (req, res) => {
+    app.put("/product/:id", async (req, res) => {
       const id = req.params.id;
       const updatedProduct = req.body;
-    
+
       try {
-        const filter =  { _id: new ObjectId(id) };
+        const filter = { _id: new ObjectId(id) };
         const updateDoc = { $set: updatedProduct };
         const result = await productCollection.updateOne(filter, updateDoc);
-    
+
         if (result.modifiedCount > 0) {
-          res.send({ message: 'Product updated successfully' });
+          res.send({ message: "Product updated successfully" });
         } else {
-          res.status(404).send({ message: 'Product not found' });
+          res.status(404).send({ message: "Product not found" });
         }
       } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send({ message: 'Internal Server Error' });
+        console.error("Error:", error);
+        res.status(500).send({ message: "Internal Server Error" });
       }
     });
 
@@ -214,6 +214,29 @@ async function run() {
       const orders = await cursor.toArray();
       res.send(orders);
     });
+
+    // Update an order by its ID
+    app.put("/orders/:id", verifyJWT, async (req, res) => {
+      const id = req.params.id;
+      const updatedOrder = req.body;
+
+      try {
+        const filter = { _id: new ObjectId(id) };
+        const updateDoc = { $set: updatedOrder };
+        const result = await orderCollection.updateOne(filter, updateDoc);
+
+        if (result.modifiedCount > 0) {
+          res.send({ message: "Order updated successfully" });
+        } else {
+          res.status(404).send({ message: "Order not found" });
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        res.status(500).send({ message: "Internal Server Error" });
+      }
+    });
+
+    //end
   } finally {
   }
 }
