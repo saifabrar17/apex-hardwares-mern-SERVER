@@ -46,6 +46,7 @@ async function run() {
     const userCollection = client.db("apex_hardwares").collection("users");
     const reviewCollection = client.db("apex_hardwares").collection("reviews");
 
+    const customOrderCollection = client.db("apex_hardwares").collection("customOrders");
     //user collection api START
 
     //admin role
@@ -215,6 +216,8 @@ async function run() {
       res.send(orders);
     });
 
+    
+
     // Update an order by its ID
     app.put("/orders/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
@@ -235,6 +238,14 @@ async function run() {
         res.status(500).send({ message: "Internal Server Error" });
       }
     });
+
+    // Add a new custom order
+    app.post("/customOrder", async (req, res) => {
+      const customOrder = req.body;
+      const result = await customOrderCollection.insertOne(customOrder);
+      res.send(result);
+    });
+
 
     //end
   } finally {
