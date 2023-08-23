@@ -133,6 +133,8 @@ async function run() {
       res.send(product);
     });
 
+
+
     //ADD NEW PRODUCT
     app.post("/product", async (req, res) => {
       const newProduct = req.body;
@@ -245,6 +247,22 @@ async function run() {
       const result = await customOrderCollection.insertOne(customOrder);
       res.send(result);
     });
+
+    // app.get("/allCustomOrders", async (req, res) => {
+    //   const query = {};
+    //   const cursor = customOrderCollection.find(query);
+    //   const products = await cursor.toArray();
+    //   res.send(products);
+    // });
+
+    app.get("/allCustomOrders", verifyJWT, async (req, res) => {
+      const query = {};
+      const cursor = customOrderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
+
+ 
 
 
     //end
