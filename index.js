@@ -58,6 +58,13 @@ async function run() {
       res.send({ admin: isAdmin });
     });
 
+    app.get('/employee/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = await userCollection.findOne({ email: email });
+      const isEmployee = user.role === 'employee';
+      res.send({ employee: isEmployee });
+  });
+
     app.put("/userx/admin/:email", verifyJWT, async (req, res) => {
       const email = req.params.email;
       const requester = req.decoded.email;
@@ -75,6 +82,34 @@ async function run() {
         res.status(403).send({ message: "forbidden" });
       }
     });
+
+
+    app.put("/userx/employee/:email", verifyJWT, async (req, res) => {
+      const email = req.params.email;
+      const requester = req.decoded.email;
+      const requesterAccount = await userCollection.findOne({
+        email: requester,
+      });
+      
+      if (requesterAccount.role === "admin") {
+        const filter = { email: email };
+        const updateDoc = {
+          $set: { role: "employee" },
+        };
+        const result = await userCollection.updateOne(filter, updateDoc);
+        res.send(result);
+      } else {
+        res.status(403).send({ message: "forbidden" });
+      }
+    });
+
+    app.get('/employee/:email', async (req, res) => {
+      const email = req.params.email;
+      const user = await userCollection.findOne({ email: email });
+      const isEmployee = user.role === 'employee';
+      res.send({ employee: isEmployee });
+  });
+
 
     // Removing a user
     app.delete("/users/:userId", async (req, res) => {
